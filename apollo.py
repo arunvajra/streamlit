@@ -34,14 +34,12 @@ if selected_gene:
 
     # Define function to concatenate while removing consecutive duplicates
     def concatenate_unique(series):
-        sorted_values = sorted(series.dropna())
-        unique_values = []
-        previous_value = None
-        for value in sorted_values:
-            if value != previous_value:
-                unique_values.append(value)
-            previous_value = value
-        return ', '.join(unique_values)
+        # Split the phenotype strings into individual phenotype terms
+        phenotype_terms = series.dropna().str.split(',').explode()
+        # Remove leading/trailing whitespaces and sort the terms
+        sorted_unique_terms = sorted(set(phenotype_terms.str.strip()))
+        # Join the unique, sorted terms back into a string
+        return ', '.join(sorted_unique_terms)
 
     # Combine all the phenotypes for each variant, removing consecutive duplicates
     combined_variants = filtered_variants.groupby('variant')['phenotypes'].agg(concatenate_unique).reset_index().rename(columns={'variant': 'variants'})
