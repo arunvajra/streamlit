@@ -11,7 +11,7 @@ drug_names = drugs_df['Name'].dropna().tolist()
 gene_names = genes_df['Symbol'].dropna().tolist()
 
 # Homepage with search boxes
-st.title('Drug and Gene Search')
+st.title('Drug-Gene Search')
 
 # Drug search box
 selected_drug = st.selectbox('What drug do you want to prescribe this patient?', options=drug_names, key='drug_search')
@@ -41,7 +41,7 @@ if selected_gene:
         return ', '.join(unique_values)
 
     # Combine all the phenotypes for each variant, removing consecutive duplicates
-    combined_variants = filtered_variants.groupby('variant')['phenotypes'].agg(concatenate_unique).reset_index()
+    combined_variants = filtered_variants.groupby('variant')['phenotypes'].agg(concatenate_unique).reset_index().rename(columns={'variant': 'variants'})
 
     # If there are results, display them in a table
     if not combined_variants.empty:
