@@ -6,9 +6,6 @@ drugs_df = pd.read_csv('drugs.tsv', sep='\t')
 genes_df = pd.read_csv('genes.tsv', sep='\t')
 clinical_variants_df = pd.read_csv('clinicalVariants.tsv', sep='\t')
 
-# Update the 'variant' column to keep only the part after "*"
-clinical_variants_df['variant'] = clinical_variants_df['variant'].apply(lambda x: '*' + x.split('*')[-1] if '*' in str(x) else x)
-
 # Get lists of drug and gene names
 drug_names = drugs_df['Name'].dropna().tolist()
 gene_names = genes_df['Symbol'].dropna().tolist()
@@ -31,6 +28,9 @@ if selected_gene:
 
     # Filter the clinical variants based on the selected gene
     filtered_variants = clinical_variants_df[clinical_variants_df['gene'] == selected_gene]
+
+    # Remove gene name from variant names
+    filtered_variants['variant'] = filtered_variants['variant'].apply(lambda x: x.replace(selected_gene, '') if pd.notnull(x) else x)
 
     # Define function to concatenate while removing consecutive duplicates
     def concatenate_unique(series):
